@@ -21,15 +21,17 @@ body {
 	height: 100vh;
 }
 
-.display {
-	height: 15%;
-}
-
 .calc-container {
 	width: 330px;
 	height: 420px;
 	background-color: #0a0a0a;
 	outline: 2px solid rgb(77, 77, 77);
+}
+
+// Calculator display
+
+.display {
+	height: 15%;
 }
 
 .formula {
@@ -50,6 +52,8 @@ body {
 	margin: 0;
 }
 
+// Calculator input
+
 .input-container {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
@@ -57,16 +61,6 @@ body {
 	height: 85%;
 	padding: 5px;
 	gap: 1px;
-}
-
-.zero,
-.clear {
-	grid-column: 1 / 3;
-}
-
-.equal {
-	grid-row: 4 / -1;
-	grid-column: 4;
 }
 
 button {
@@ -84,6 +78,16 @@ button {
 	&:active {
 		transform: scale(0.98);
 	}
+}
+
+.zero,
+.clear {
+	grid-column: 1 / 3;
+}
+
+.equal {
+	grid-row: 4 / -1;
+	grid-column: 4;
 }
 
 .add,
