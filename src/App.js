@@ -1,6 +1,6 @@
 import './styles/App.scss';
 import { useState } from 'react';
-import { evaluate } from 'mathjs';
+import { evaluate, format } from 'mathjs';
 
 function App() {
 	const [displayNumber, setDisplayNumber] = useState({
@@ -130,6 +130,10 @@ function App() {
 			}, 2000);
 		} else {
 			var answer = evaluate(displayNumber.formula).toString();
+
+			if (answer.length > 15) {
+				answer = format(Number(answer));
+			}
 
 			setDisplayNumber({
 				...displayNumber,
