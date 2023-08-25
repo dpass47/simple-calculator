@@ -24,26 +24,48 @@ function App() {
 				  }
 				: {
 						...displayNumber,
-						currentVal: displayNumber.currentVal + e.target.value,
-						formula:
-							displayNumber.formula === '0'
-								? displayNumber.currentVal + e.target.value
-								: displayNumber.formula + e.target.value,
+						currentVal: displayNumber.formula.includes('=')
+							? e.target.value
+							: displayNumber.currentVal + e.target.value,
+						formula: displayNumber.formula.includes('=')
+							? e.target.value
+							: displayNumber.formula === '0'
+							? displayNumber.currentVal + e.target.value
+							: displayNumber.formula + e.target.value,
 				  }
 		);
 	}
 
-	function handleDecimal(e) {}
+	function handleDecimal() {
+		setDisplayNumber({
+			...displayNumber,
+			currentVal: displayNumber.currentVal.includes('.')
+				? displayNumber.currentVal
+				: displayNumber.currentVal + '.',
+			formula: displayNumber.formula.includes('=')
+				? displayNumber.currentVal.includes('.')
+					? displayNumber.currentVal
+					: displayNumber.currentVal + '.'
+				: displayNumber.currentVal.includes('.')
+				? displayNumber.formula
+				: displayNumber.currentVal === '0'
+				? displayNumber.formula + '0.'
+				: displayNumber.formula + '.',
+		});
+	}
 
 	function expressionCalculation(x) {
 		setDisplayNumber({
 			...displayNumber,
 			prevVal: displayNumber.currentVal,
 			currentVal: '0',
-			formula:
-				displayNumber.formula === '0'
-					? displayNumber.currentVal + `${x}`
-					: displayNumber.formula + `${x}`,
+			formula: displayNumber.formula.includes('=')
+				? displayNumber.currentVal + `${x}`
+				: displayNumber.formula === '0'
+				? displayNumber.currentVal + `${x}`
+				: displayNumber.formula.endsWith('.')
+				? displayNumber.formula + `0${x}`
+				: displayNumber.formula + `${x}`,
 		});
 	}
 
@@ -76,13 +98,29 @@ function App() {
 	}
 
 	function handleCalculation(e) {
-		let answer = evaluate(displayNumber.formula);
+		if (displayNumber.formula.endsWith('-', '+', '/', '*')) {
+			setDisplayNumber({
+				...displayNumber,
+				currentVal: 'INVALID FORMULA',
+			});
 
-		setDisplayNumber({
-			...displayNumber,
-			currentVal: answer,
-			formula: displayNumber.formula + '=' + answer,
-		});
+			setTimeout(() => {
+				setDisplayNumber({
+					...displayNumber,
+					currentVal: displayNumber.currentVal,
+				});
+			}, 2000);
+		} else {
+			var answer = evaluate(displayNumber.formula).toString();
+
+			setDisplayNumber({
+				...displayNumber,
+				currentVal: answer,
+				formula: displayNumber.formula.endsWith('.')
+					? displayNumber.formula + '0 =' + answer
+					: displayNumber.formula + '=' + answer,
+			});
+		}
 	}
 
 	return (
@@ -209,7 +247,7 @@ function App() {
 					<button
 						className="number-inputs"
 						value="."
-						onClick={(e) => handleDecimal(e)}
+						onClick={handleDecimal}
 					>
 						.
 					</button>
