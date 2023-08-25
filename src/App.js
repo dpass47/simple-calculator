@@ -12,28 +12,46 @@ function App() {
 	});
 
 	function handleNumbers(e) {
-		setDisplayNumber((displayNumber) =>
-			displayNumber.currentVal === '0'
-				? {
-						...displayNumber,
-						currentVal: e.target.value,
-						formula:
-							displayNumber.formula === '0'
+		if (displayNumber.currentVal.length > 15) {
+			setDisplayNumber({
+				...displayNumber,
+				currentVal: 'MET DIGIT LIMIT',
+			});
+			setTimeout(() => {
+				setDisplayNumber({
+					...displayNumber,
+					// currentVal: displayNumber.prevVal,
+				});
+			}, 1000);
+		} else {
+			setDisplayNumber((displayNumber) =>
+				displayNumber.currentVal === '0'
+					? {
+							...displayNumber,
+							currentVal: e.target.value,
+							prevVal: displayNumber.currentVal,
+							formula:
+								displayNumber.formula === '0'
+									? e.target.value
+									: displayNumber.formula + e.target.value,
+					  }
+					: displayNumber.currentVal.length > 15 ||
+					  displayNumber.currentVal === 'MET DIGIT LIMIT'
+					? { ...displayNumber }
+					: {
+							...displayNumber,
+							currentVal: displayNumber.formula.includes('=')
 								? e.target.value
+								: displayNumber.currentVal + e.target.value,
+							prevVal: displayNumber.currentVal,
+							formula: displayNumber.formula.includes('=')
+								? e.target.value
+								: displayNumber.formula === '0'
+								? displayNumber.currentVal + e.target.value
 								: displayNumber.formula + e.target.value,
-				  }
-				: {
-						...displayNumber,
-						currentVal: displayNumber.formula.includes('=')
-							? e.target.value
-							: displayNumber.currentVal + e.target.value,
-						formula: displayNumber.formula.includes('=')
-							? e.target.value
-							: displayNumber.formula === '0'
-							? displayNumber.currentVal + e.target.value
-							: displayNumber.formula + e.target.value,
-				  }
-		);
+					  }
+			);
+		}
 	}
 
 	function handleDecimal() {
