@@ -2,13 +2,14 @@ import './styles/App.scss';
 import { useState } from 'react';
 import { evaluate, format } from 'mathjs';
 
+const operators = ['+', '-', '*', '/'];
+
 function App() {
 	const [displayNumber, setDisplayNumber] = useState({
 		currentVal: '0',
 		prevVal: '0',
 		formula: '0',
 		currentSign: 'pos',
-		lastClicked: '',
 	});
 
 	function handleNumbers(e) {
@@ -24,7 +25,10 @@ function App() {
 			}, 1000);
 		} else {
 			setDisplayNumber((displayNumber) =>
-				displayNumber.currentVal === '0'
+				displayNumber.currentVal === '0' ||
+				operators.some((operator) =>
+					displayNumber.currentVal.includes(operator)
+				)
 					? {
 							...displayNumber,
 							currentVal: e.target.value,
@@ -47,6 +51,8 @@ function App() {
 								? e.target.value
 								: displayNumber.formula === '0'
 								? displayNumber.currentVal + e.target.value
+								: displayNumber.currentSign === 'neg'
+								? displayNumber.formula + '-' + e.target.value
 								: displayNumber.formula + e.target.value,
 					  }
 			);
@@ -58,6 +64,10 @@ function App() {
 			...displayNumber,
 			currentVal: displayNumber.currentVal.includes('.')
 				? displayNumber.currentVal
+				: operators.some((operator) =>
+						displayNumber.currentVal.includes(operator)
+				  )
+				? '.'
 				: displayNumber.currentVal + '.',
 			formula: displayNumber.formula.includes('=')
 				? displayNumber.currentVal.includes('.')
@@ -70,18 +80,26 @@ function App() {
 	}
 
 	function expressionCalculation(x) {
-		setDisplayNumber({
-			...displayNumber,
-			prevVal: displayNumber.currentVal,
-			currentVal: '0',
-			formula: displayNumber.formula.includes('=')
-				? displayNumber.currentVal + `${x}`
-				: displayNumber.formula === '0'
-				? displayNumber.currentVal + `${x}`
-				: displayNumber.formula.endsWith('.')
-				? displayNumber.formula + `0${x}`
-				: displayNumber.formula + `${x}`,
-		});
+		if (displayNumber.currentVal === '0' && x === '-') {
+			setDisplayNumber({
+				...displayNumber,
+				currentVal: '-',
+				currentSign: 'neg',
+			});
+		} else {
+			setDisplayNumber({
+				...displayNumber,
+				prevVal: displayNumber.currentVal,
+				currentVal: x,
+				formula: displayNumber.formula.includes('=')
+					? displayNumber.currentVal + `${x}`
+					: displayNumber.formula === '0'
+					? displayNumber.currentVal + `${x}`
+					: displayNumber.formula.endsWith('.')
+					? displayNumber.formula + `0${x}`
+					: displayNumber.formula + `${x}`,
+			});
+		}
 	}
 
 	function handleOperators(e) {
@@ -113,8 +131,6 @@ function App() {
 	}
 
 	function handleCalculation(e) {
-		const operators = ['+', '-', '*', '/'];
-
 		if (
 			operators.some((operator) =>
 				displayNumber.formula.endsWith(operator)
