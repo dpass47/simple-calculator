@@ -15,12 +15,11 @@ function App() {
 		if (displayNumber.currentVal.length > 15) {
 			setDisplayNumber({
 				...displayNumber,
-				currentVal: 'MET DIGIT LIMIT',
+				currentVal: 'DIGIT LIMIT MET',
 			});
 			setTimeout(() => {
 				setDisplayNumber({
 					...displayNumber,
-					// currentVal: displayNumber.prevVal,
 				});
 			}, 1000);
 		} else {
@@ -36,7 +35,7 @@ function App() {
 									: displayNumber.formula + e.target.value,
 					  }
 					: displayNumber.currentVal.length > 15 ||
-					  displayNumber.currentVal === 'MET DIGIT LIMIT'
+					  displayNumber.currentVal === 'DIGIT LIMIT MET'
 					? { ...displayNumber }
 					: {
 							...displayNumber,
@@ -66,8 +65,6 @@ function App() {
 					: displayNumber.currentVal + '.'
 				: displayNumber.currentVal.includes('.')
 				? displayNumber.formula
-				: displayNumber.currentVal === '0'
-				? displayNumber.formula + '0.'
 				: displayNumber.formula + '.',
 		});
 	}
@@ -116,7 +113,13 @@ function App() {
 	}
 
 	function handleCalculation(e) {
-		if (displayNumber.formula.endsWith('-', '+', '/', '*')) {
+		const operators = ['+', '-', '*', '/'];
+
+		if (
+			operators.some((operator) =>
+				displayNumber.formula.endsWith(operator)
+			)
+		) {
 			setDisplayNumber({
 				...displayNumber,
 				currentVal: 'INVALID FORMULA',
