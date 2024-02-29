@@ -1,3 +1,5 @@
+/* Copyright (c) 2024 Dante Passalacqua */
+
 import './styles/App.scss';
 import { useState } from 'react';
 import { evaluate, format } from 'mathjs';
